@@ -1,0 +1,39 @@
+//имена студентов
+select surname, COUNT(id) as cou from students group by name order by cou desc;
+
+
+СУЩНОСТИ БД
+Student:
+         id;
+         name;
+         surname;
+         email;
+         group;
+
+Темы курса:
+        id
+        название
+
+Упражнения:
+        id
+        название
+
+        id ссылка на тему курса
+
+Дз:
+        id
+        название
+
+        id ссылка на тему курса
+
+СВЯЗКА СУЩНОСТЕЙ
+
+StudentДз
+        id.Student
+        id.Дз
+        баллы студента
+
+StudentУпражнения
+        id.Student
+        id.Упражнение
+        баллы студента
