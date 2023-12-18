@@ -12,7 +12,7 @@ public class VKParser {
 
     // https://vk.com/apps?act=manage
     // IDAPP - id standalone приложения, надо будет создавать, а также указать openapi и "открыть" приложение в настройках
-    // потом вставить в строку IDAPP, открыть в браузере
+    // потом вставить в строку IDAPP, открыть в браузере https://oauth.vk.com/authorize?client_id=51809250&display=page&redirect_uri=https://oauth.vk.com/blank.html&scope=offline&response_type=token&v=5.131&state=123456
     // после в адресной строке скопировать access token и убрать другие параметры &
 
     private static final String access_token = "";//token

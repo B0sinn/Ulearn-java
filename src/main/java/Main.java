@@ -1,31 +1,31 @@
-import au.com.bytecode.opencsv.CSVReader;//
+import au.com.bytecode.opencsv.CSVReader;
 import data.Database;// хранит информацию о всех студентах и их темах в базе данных SQLite.
-import data.entity.CourseTheme;//информация о тема курса
-import data.entity.Exercise; // информация об упражнениях
-import data.entity.HomeWork;// информация о дз
-import data.entity.Student;// о студенте
+import data.entity.CourseTheme;
+import data.entity.Exercise;
+import data.entity.HomeWork;
+import data.entity.Student;
 import uichart.Foo;
 import uichart.NameFrequencyChart;
 import vk.VKParser;
 
 import java.io.FileReader;//чтение файла возвращает данные в байт формате
 import java.io.IOException;
-import java.sql.DriverManager;//для подключения к бд
+import java.sql.DriverManager;
 import java.util.*;
 
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        var students = getStudents();
+        var students = getStudents();//список студентов из csv файла
         Database.saveDB(students);//сохраняем данные из файла в БД
 
         Class.forName("org.sqlite.JDBC");// подключаем класс для реализации драйвера SQLlite
         var connection = DriverManager.getConnection("jdbc:sqlite:src/main/resources/database.db");// устанавливаем соединение с БД
         new NameFrequencyChart().createDemoPanel(connection);//отрисовка графиков
-        new Foo().createDemoPanel(connection);
+        new Foo().createDemoPanel(connection);//
 
-        // запускается один раз для сбора данных из группы вк
-//        VKParser.parseGroupMembers();
+        // запускается один раз для сбора данных из группы вк создание json
+       VKParser.parseGroupMembers();
     }
 
 
@@ -41,7 +41,7 @@ public class Main {
         }
 
         var exerciseAndHomework = reader.readNext();
-        reader.readNext(); //пропуск 3 строки с максимума по каждой теме
+        reader.readNext(); //пропуск 3 строки с максимумом по каждой теме
 
         String[] strokaData; //столбцы строки с данными студента
         var students = new ArrayList<Student>();
@@ -55,7 +55,7 @@ public class Main {
             if (fi.length < 2)
                 continue;
 
-            //создаем студента с фИ, почтой, ulearn id и группой
+            //создаем студента с ФИ, почтой, ulearn id и группой
             var student = new Student(strokaData[1], fi[0], fi[1], strokaData[2], strokaData[3]);
             students.add(student);
 
@@ -89,14 +89,14 @@ public class Main {
                             endInd = themesIndex.get(end);
 
                         for (int i = startInd; i < endInd; i++) {
-                            //добавляем в курсы студента упражнения и дз
+                            //добавляем в темы курса студента упражнения и дз
                             if (exerciseAndHomework[i].startsWith("Упр:"))
                                 course.getExerciseList().add(new Exercise(exerciseAndHomework[i], Integer.parseInt(finalData[i])));
                             else if (exerciseAndHomework[i].startsWith("ДЗ:"))
                                 course.getHomeWorkList().add(new HomeWork(exerciseAndHomework[i], Integer.parseInt(finalData[i])));
 
                         }
-                        //добавляем курс студенту
+                        //добавляем тему курса студенту
                         student.getCourseThemes().add(course);
                     });
         }

@@ -17,6 +17,7 @@ public class NameFrequencyChart extends JFrame{
 
     private CategoryDataset getNamesFrequency(Connection connection) throws Exception {
         final var SQL = "select * from (select surname, COUNT(id) as freq from students group by name) as tab where tab.freq>1; ";
+        //выборка значений имен >1
         var statement = connection.createStatement();
         var rs = statement.executeQuery(SQL);
 
@@ -36,6 +37,7 @@ public class NameFrequencyChart extends JFrame{
     public CategoryDataset createDataset(Connection connection) throws Exception {
         return getNamesFrequency(connection);
     }
+    //Чтение данных и создание объекта набора данных Dataset
 
 
     private JFreeChart createChart(CategoryDataset dataset)

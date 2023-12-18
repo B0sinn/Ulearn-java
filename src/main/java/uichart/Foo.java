@@ -19,7 +19,10 @@ import java.sql.Connection;
 
 public class Foo extends JFrame {
     private CategoryDataset getNamesFrequency(Connection connection) throws Exception {
-        final var SQL = "select exercise.name,coursepoints,count(student_id) as students from student2exercise join exercise on exercise.id=exercise_id group by exercise.name,coursepoints";
+        final var SQL = "select exercise.name,coursepoints,count(student_id) as students from student2exercise join exercise on exercise.id=exercise_id group by exercise.name,coursepoints limit 10";
+        //выбирает имя упражнения , количество баллов за упражнение и количество студентов,
+        // выполнивших это упражнение, из таблиц "student2exercise" и "exercise", группируя результаты по
+        // имени упражнения и количеству баллов.
         var statement = connection.createStatement();
         var rs = statement.executeQuery(SQL);
 
@@ -40,6 +43,7 @@ public class Foo extends JFrame {
     public CategoryDataset createDataset(Connection connection) throws Exception {
         return getNamesFrequency(connection);
     }
+    //Чтение данных и создание объекта набора данных Dataset
 
 
     private JFreeChart createChart(CategoryDataset dataset)

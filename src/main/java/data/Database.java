@@ -17,24 +17,29 @@ import java.util.*;
 
 public class Database {
 
-    private static Connection connection;
+    private static Connection connection; // отвечает за подключение БД
 
     public static void saveDB(List<Student> students) throws Exception {
         Class.forName("org.sqlite.JDBC");
         var conn = DriverManager.getConnection("jdbc:sqlite:src/main/resources/database.db");
-        var statement = conn.createStatement();
-        conn.setAutoCommit(false);
+        var statement = conn.createStatement();//создание запросов
+        conn.setAutoCommit(false);// отключил, т.к. с комитами очень долго сохраняется
         connection = conn;
-        createTables(statement);
 
-        saveEntities(students);
+        createTables(statement);//создаем таблицы
+
+        //сохраняет в бд структуру курса, темы, дз и упражнения для того, чтобы в будущем
+        //в таблицах student2exercise и studen2homework ссылаться на id
+        saveEntities(students.get(0).getCourseThemes());
+
+        // сохраняем для каждого студента его статистику за курс
         saveStudents(students);
-        saveGroupMembers();
 
-        conn.commit();
+        saveGroupMembers(); //сохраняем из json данный о студентах(участниках группы)
+        conn.commit();//сохраняем изменения в БД
         conn.rollback();
-        statement.close();
-        conn.close();
+        statement.close();// закрываем запросы
+        conn.close(); // закрываем соединение с бд
     }
 
     private static void saveGroupMembers() throws Exception {
@@ -49,16 +54,18 @@ public class Database {
             insertGroupMembers(user);
         }
     }
+    // считывает JSON-данные из файла, преобразует их в объект Java с помощью библиотеки Gson,
+    // а затем обрабатывает каждый элемент в JSON-данных
 
 
-    private static void saveEntities(List<Student> students) throws Exception {
-        var themes = students.get(0).getCourseThemes();
+    private static void saveEntities(List<CourseTheme> themes) throws Exception {
+
         for (var theme : themes) {
             insertThemes(connection, theme);
             insertDataHomeWork(theme, theme.getHomeWorkList());
             insertDataExercise(theme, theme.getExerciseList());
         }
-    }
+    } //для каждой темы сохраняются  ДЗ и УПР
     private static void insertGroupMembers(User user) throws Exception {
         final var SQL = "INSERT INTO 'members' ('id','first_name','last_name','sex','country') VALUES (?,?,?,?,?);";
         var statement = connection.prepareStatement(SQL);
@@ -70,7 +77,7 @@ public class Database {
         statement.setString(5, user.getCountry() == null ? "None" : user.getCountry().getTitle());
         statement.executeUpdate();
         statement.close();
-    }
+    }// Вставляем данные в таблицу
     private static void createTables(Statement statement) throws SQLException {
         statement.execute("drop table IF EXISTS 'students';");
         statement.execute(
@@ -131,7 +138,7 @@ public class Database {
         for (var hw : homeWork) {
             ps.clearParameters();
             ps.setString(1, hw.getName());
-            ps.setLong(2, getThemeId(connection, theme));
+            ps.setLong(2, getThemeId(connection, theme)); // по названию ищем в БД id темы
             ps.addBatch();
         }
         ps.clearParameters();
@@ -254,7 +261,7 @@ public class Database {
         themeIds.put(theme.getName(), themeId);
         statement.close();
         return themeId;
-    }
+    } // если у темы был id возвращаем его, иначе добавляем
 
     private static HashMap<String, Long> homeworksId = new HashMap<>();
 

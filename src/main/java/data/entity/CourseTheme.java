@@ -14,7 +14,7 @@ public class CourseTheme {
         this.name=name;
         this.homeWorkList = new ArrayList<>();
         this.exerciseList = new ArrayList<>();
-    }
+    }//инициализации
 
     @Override
     public String toString() {
@@ -23,11 +23,12 @@ public class CourseTheme {
                 ", homeWorkList=" + homeWorkList +
                 ", exerciseList=" + exerciseList +
                 '}';
-    }
+    }//переопределяем стандартный метод для возвращения информации об объекте в виде строки,
+    // включая значения его полей.
 
     public String getName() {
         return name;
-    }
+    } // доступ к этим полям извне класса,
 
     public List<HomeWork> getHomeWorkList() {
         return homeWorkList;
